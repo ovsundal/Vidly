@@ -1,0 +1,39 @@
+﻿@model Vidly.ViewModel.RandomMovieViewModel
+@{
+    ViewBag.Title = "Random";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+@*render a class dynamically - only apply class to html if condition is true*@
+@{
+    var className = Model.Customers.Count > 0 ? "popular" : null;
+}
+@*h2 is only given a class if condition above evaluates to true*@
+<h2 class="@className">@Model.Movies</h2>
+
+
+@if (Model.Customers.Count == 0)
+{
+    <text>There are no customers yet</text>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>Customer</th>
+
+        </tr>
+
+        @*render all customers*@
+
+            @foreach (var customer in Model.Customers)
+            {
+
+                <tr><th>@Html.ActionLink(customer.Name, "Random", new {id= customer.Id})</th></tr>
+
+            }
+
+    </table>
+}
+
+
