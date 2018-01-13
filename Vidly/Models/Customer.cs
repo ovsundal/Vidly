@@ -14,6 +14,7 @@ namespace Vidly.Models
         [StringLength(255)]
         public string Name { get; set; }
         public bool IsSubscribedToNewsLetter { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         //navigation property - associates Customer class with membership type 
         //(allows to navigate from one type to another)
