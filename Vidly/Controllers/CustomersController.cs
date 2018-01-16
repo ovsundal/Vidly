@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Vidly.Models;
+using Vidly.ViewModel;
 
 namespace Vidly.Controllers
 {
@@ -20,6 +21,50 @@ namespace Vidly.Controllers
         protected override void Dispose(bool disposing)
         {
             _context.Dispose();
+        }
+
+        public ActionResult New()
+        {
+            var membershipTypes = _context.MembershipTypes.ToList();
+            var viewModel = new CustomerFormViewModel
+            {
+                MembershipTypes = membershipTypes
+            };
+
+            return View("CustomerForm", viewModel);
+        }
+
+        [HttpPost]
+        //model binding, data from form is automatically added to customer class
+        public ActionResult Save(Customer customer)
+        {
+            //if new customer
+            if (customer.Id == 0)
+            {
+                _context.Customers.Add(customer);
+            }
+            //if existing customer
+            else
+            {
+                //get customer from database, do changes, and save
+                var customerInDb = _context.Customers.Single(c => c.Id == customer.Id);
+
+                //update automatically. Should not use, because a malicious user can add parameters and update
+                //key data (this method will update all properties). If restrictions are set, magic strings are 
+                //introduced
+                //TryUpdateModel(customerInDb, "", new string[] {"Name", "Email")};
+
+                //correct approach for updating
+                customerInDb.Name = customer.Name;
+                customerInDb.BirthDate = customer.BirthDate;
+                customerInDb.MembershipTypeId = customer.MembershipTypeId;
+                customerInDb.IsSubscribedToNewsLetter= customer.IsSubscribedToNewsLetter;
+
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Customers");
         }
 
         public ViewResult Index()
@@ -38,6 +83,25 @@ namespace Vidly.Controllers
                 return HttpNotFound();
 
             return View(customer);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+            {
+                return HttpNotFound();
+            }
+
+            var viewModel = new CustomerFormViewModel()
+            {
+                Customer = customer,
+                MembershipTypes = _context.MembershipTypes.ToList()
+            };
+
+            //Override view returned, if not "CustomerForm" it will return View of Edit
+            return View("CustomerForm", viewModel);
         }
     }
 }
