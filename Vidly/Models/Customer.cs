@@ -10,7 +10,7 @@ namespace Vidly.Models
     {
         public int Id { get; set; }
         //Data annotations, required means non-nullable in db
-        [Required]
+        [Required(ErrorMessage = "Please enter customer's name.")]
         [StringLength(255)]
         public string Name { get; set; }
 
@@ -18,12 +18,15 @@ namespace Vidly.Models
 
         //what to display in view
         [Display(Name = "Date of Birth")]
+        //apply custom validation
+        [Min18YearsIfAMember]
         public DateTime? BirthDate { get; set; }
 
         //navigation property - associates Customer class with membership type 
         //(allows to navigate from one type to another)
         public MembershipType MembershipType { get; set; }
 
+        //type byte is implicitly required (add byte? for optional)
         [Display(Name = "Membership Type")]
         public byte MembershipTypeId { get; set; }
 

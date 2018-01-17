@@ -8,21 +8,30 @@
 
 @using (Html.BeginForm("Save", "Customers"))
 {
+    //display a list of validation errors
+    @Html.ValidationSummary(true, "Please fix the following errors.")
+
     //using razor instead of raw HTML makes it not need data validation, since this is already declared in class
     <div class="form-group">
         @Html.LabelFor(m => m.Customer.Name)
         @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control" })
+        @*styling validation error; change CSS of .field-validation-error for text,
+            and .input-validation-error for input box in /Content/Site.css*@
+        @Html.ValidationMessageFor(m => m.Customer.Name)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.MembershipTypeId)
+        @Html.DropDownListFor(m => m.Customer.MembershipTypeId,
+                 new SelectList(Model.MembershipTypes, "Id", "Name"),
+                 //empty string to provide an empty slot on top of list
+                 "Select Membership Type", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.MembershipTypeId)
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Customer.BirthDate)
         @*format string for proper datetime format*@
         @Html.TextBoxFor(m => m.Customer.BirthDate, "{0:d MMM yyyy}", new { @class = "form-control" })
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Customer.MembershipTypeId)
-        @Html.DropDownListFor(m => m.Customer.MembershipTypeId, new SelectList(Model.MembershipTypes, "Id", "Name"),
-                 //empty string to provide an empty slot on top of list
-                 "Select Membership Type", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.BirthDate)
     </div>
     <div class="form-check">
         <label>
@@ -30,6 +39,16 @@
         </label>
     </div>
     @Html.HiddenFor(m => m.Customer.Id)
+    //prevent CSFR
+    @Html.AntiForgeryToken()
     <button type="submit" class="btn btn-primary">Save</button>
 }
 
+@*enable client validation - gives immediate client feedback, and doesn't waste
+    server resources. Check that it's working in dev-tools-> Network (should not get
+    resources from server. Only work for standard validation. 
+    Must also add [ValidateAntiForgeryToken] in controller method)*@
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
