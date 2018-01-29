@@ -21,6 +21,7 @@ namespace Vidly.ViewModel
             Name = movie.Name;
             ReleaseDate = movie.ReleaseDate;
             NumberInStock = movie.NumberInStock;
+            NumberAvailable = movie.NumberInStock;
             GenreId = movie.GenreId;
         }
 
@@ -43,6 +44,9 @@ namespace Vidly.ViewModel
         [Required]
         [Range(1, 20)]
         public byte? NumberInStock { get; set; }
+
+        [Display(Name = "Number available")]
+        public byte NumberAvailable { get; set; }
 
         //used to either set new movie or edit movie in MovieForm view. Better than adding
         //view logic due to easier maintainability
