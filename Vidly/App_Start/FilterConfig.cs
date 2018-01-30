@@ -7,6 +7,7 @@ namespace Vidly
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
+            //applies Views/Shared/Error.cshtml to all app pages
             filters.Add(new HandleErrorAttribute());
             //this line makes the entire app require authorization
             //use [AllowAnonymous] to add exceptions

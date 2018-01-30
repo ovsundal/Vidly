@@ -102,6 +102,7 @@ namespace Vidly.Controllers
 
             if (customer == null)
             {
+                //set page to 404 error
                 return HttpNotFound();
             }
 
